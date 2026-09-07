@@ -355,13 +355,6 @@ dialog::backdrop { background: rgba(20, 18, 13, .5); }
   background: var(--paper);
 }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; text-decoration: none; color: inherit; }
-.brand__mark {
-  width: 34px; height: 34px; flex: none;
-  display: grid; place-items: center;
-  background: var(--red); color: var(--paper);
-  border-radius: var(--r);
-  font: 800 15px/1 var(--display);
-}
 .brand__t {
   display: block;
   font: 700 clamp(15px, 4vw, 18px)/1 var(--display);

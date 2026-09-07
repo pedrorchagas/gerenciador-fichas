@@ -139,7 +139,7 @@
     return '<div class="hero">' +
       '<h1>Cardápio<br><em>feira da amizade 2026</em></h1>' +
       '<p>Escolha o que quiser das barracas, pague pelo Pix no celular e retire ' +
-      'a ficha no caixa. Toda a renda fica com a festa.</p>' +
+      'a ficha no caixa.</p>' +
       '<ul class="hero__steps">' +
         '<li><b>1</b> Monte o pedido</li>' +
         '<li><b>2</b> Pague no Pix</li>' +
