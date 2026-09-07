@@ -1,0 +1,38 @@
+info:
+  name: Criar pedido
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/pedidos"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "buyerName": "João da Silva",
+        "buyerPhone": "11999999999",
+        "buyerEmail": "{{mpTestBuyerEmail}}",
+        "items": [
+          { "itemId": "{{itemId}}", "quantity": 2 }
+        ]
+      }
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setVar("orderId", res.body.orderId);
+
+docs: |-
+  O buyerEmail usa {{mpTestBuyerEmail}} — um comprador de teste real do Mercado
+  Pago (criado via POST /users/test_user com o MP_ACCESS_TOKEN), em vez de um
+  e-mail qualquer. É a prática recomendada pelo Mercado Pago ao testar com
+  credenciais de teste, mesmo que o backend já use a API de Orders (ver
+  docs/core-plan.md — o bug "Unauthorized use of live credentials" era a API
+  de Payments clássica não aceitar mais essas credenciais de teste).
+
+settings:
+  encodeUrl: true
+​

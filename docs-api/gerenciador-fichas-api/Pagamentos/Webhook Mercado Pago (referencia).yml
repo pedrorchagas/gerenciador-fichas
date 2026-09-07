@@ -1,0 +1,37 @@
+info:
+  name: Webhook Mercado Pago (referência)
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/pagamentos/notifications?data.id={{mpOrderId}}"
+  auth: inherit
+  headers:
+    - name: x-signature
+      value: "ts=0,v1=preencher-com-assinatura-real"
+    - name: x-request-id
+      value: "id-de-teste"
+  body:
+    type: json
+    data: |-
+      {
+        "action": "order.processed",
+        "type": "order",
+        "data": { "id": "{{mpOrderId}}" }
+      }
+
+docs: |-
+  Esse endpoint só aceita chamadas com assinatura válida (HMAC-SHA256 usando o
+  MP_WEBHOOK_SECRET, ver middlewares/mercadoPagoWebhookMiddleware.js). Disparar essa
+  requisição manualmente pelo Bruno vai dar 401, a menos que você calcule o x-signature
+  certo à mão. Ela existe aqui só como referência do formato da notificação.
+
+  O topic é "order" (não "payment") porque o backend usa a Orders API do Mercado
+  Pago, não a Payments API clássica — ver docs/core-plan.md.
+
+  O teste real é: configurar essa URL (via ngrok) no painel do Mercado Pago e deixar
+  ele mesmo chamar depois de um Pix de teste ser criado/pago.
+
+settings:
+  encodeUrl: true

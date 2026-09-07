@@ -1,0 +1,25 @@
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# environment files
+.env
+.env.*
+
+# OS files
+.DS_Store
+
+# coverage and build outputs
+coverage/
+dist/
+build/
+
+# editor settings
+.vscode/
+.idea/
+*.sqlite

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cardápio · Festa Beneficente</title>
+<meta name="description" content="Monte seu pedido, pague no Pix e retire no caixa.">
+<meta name="theme-color" content="#c81e1e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23c81e1e'/%3E%3Cpath d='M6 8h20l-10 16z' fill='%23f5c518'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=Azeret+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/loja.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="top__bar">
+    <a class="brand" href="#/">
+      <span class="brand__mark" aria-hidden="true">FB</span>
+      <span>
+        <span class="brand__t">Feira da Amizade</span>
+        <span class="brand__s" id="topSub">Cardápio</span>
+      </span>
+    </a>
+    <button class="ib ib--plain" id="btnMine" type="button" title="Minhas fichas" aria-label="Minhas fichas" data-icon="ticket" data-icon-size="22"></button>
+  </div>
+  <nav class="catnav" id="catnav" aria-label="Categorias do cardápio"></nav>
+</header>
+
+<main class="wrap" id="view"></main>
+
+<!-- barra fixa do carrinho (só no cardápio, só com itens).
+     Vem antes do rodapé no DOM só pra o CSS poder afastá-lo quando ela aparece
+     (`~` só alcança irmão posterior). É `position: fixed`, a ordem não afeta o
+     desenho. -->
+<div class="cartbar" id="cartbar" hidden>
+  <button class="cartbar__btn" id="btnCart" type="button">
+    <span class="cartbar__ico" data-icon="cart" data-icon-size="24"></span>
+    <span class="cartbar__txt">
+      <b id="cartCount">0 itens</b>
+      <i id="cartTotal">R$ 0,00</i>
+    </span>
+    <span class="cartbar__cta">Ver pedido</span>
+  </button>
+</div>
+
+<footer class="ftr">
+  <a class="ftr__a" href="https://www.guara.dev.br" target="_blank" rel="noopener">
+    <img class="ftr__logo" src="assets/logo-guara.svg" alt="" width="24" height="18">
+    <span>Criado por Guara.dev.br</span>
+  </a>
+</footer>
+
+<!-- carrinho + checkout -->
+<dialog id="dlgCart" class="sheet" aria-labelledby="dlgCartTitle">
+  <div class="dlg__head">
+    <h2 id="dlgCartTitle">Seu pedido</h2>
+    <button class="ib ib--plain ib--sm" type="button" data-close aria-label="Fechar" data-icon="close" data-icon-size="15"></button>
+  </div>
+  <div class="dlg__body" id="cartBody"></div>
+  <div class="dlg__foot" id="cartFoot"></div>
+</dialog>
+
+<!-- minhas fichas -->
+<dialog id="dlgMine" class="sheet" aria-labelledby="dlgMineTitle">
+  <div class="dlg__head">
+    <h2 id="dlgMineTitle">Minhas fichas</h2>
+    <button class="ib ib--plain ib--sm" type="button" data-close aria-label="Fechar" data-icon="close" data-icon-size="15"></button>
+  </div>
+  <div class="dlg__body" id="mineBody"></div>
+</dialog>
+
+<script src="assets/core.js"></script>
+<script src="assets/loja.js"></script>
+</body>
+</html>

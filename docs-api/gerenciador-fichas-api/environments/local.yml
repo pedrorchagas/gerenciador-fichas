@@ -1,0 +1,14 @@
+name: local
+variables:
+  - name: baseUrl
+    value: http://localhost:3000
+  - name: token
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InBlcm9kcmlndWVzMTMyMDA2QGdtYWlsLmNvbSIsImVtYWlsIjoicGVyb2RyaWd1ZXMxMzIwMDZAZ21haWwuY29tIiwiaWF0IjoxNzg4NTcxMDkyLCJleHAiOjE3ODg2MTQyOTJ9.EL1NZROcddMqShOPygGu6KUnJF2A1QuIG3f0lKbpFSk
+  - name: itemId
+    value: ddbf0669-d9ea-46cb-a689-32c75e431339
+  - name: orderId
+    value: ""
+  - name: mpOrderId
+    value: ""
+  - name: mpTestBuyerEmail
+    value: test_user_455430721329702270@testuser.com

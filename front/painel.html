@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel do operador · Festa Beneficente</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#14120d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%2314120d'/%3E%3Cpath d='M6 8h20l-10 16z' fill='%23f5c518'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=Azeret+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/painel.css">
+</head>
+<body class="painel">
+
+<!-- ---------------------------------------------------------- login --- -->
+<section id="login" class="login" hidden>
+  <div class="login__card">
+    <div class="login__inner">
+      <div class="brand" style="margin-bottom:22px">
+        <span class="brand__mark" aria-hidden="true">FB</span>
+        <span>
+          <span class="brand__t">Painel do operador</span>
+          <span class="brand__s">Festa Beneficente</span>
+        </span>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <label class="field" data-f="email">
+          <span>E-mail</span>
+          <input class="input" name="email" type="email" autocomplete="username" required>
+          <p class="field__err"></p>
+        </label>
+        <label class="field" data-f="password">
+          <span>Senha</span>
+          <input class="input" name="password" type="password" autocomplete="current-password" required>
+          <p class="field__err"></p>
+        </label>
+        <label class="field" data-f="secret" id="fieldSecret" hidden>
+          <span>Senha de cadastro</span>
+          <input class="input" name="secret" type="password" autocomplete="off">
+          <p class="field__hint">Fornecida por quem administra o sistema.</p>
+          <p class="field__err"></p>
+        </label>
+        <button class="btn btn--primary btn--block" type="submit" id="btnLogin">Entrar</button>
+      </form>
+
+      <p class="login__alt">
+        <span id="altText">Ainda não tem acesso?</span>
+        <button class="linkish" type="button" id="btnToggleMode">Criar conta de operador</button>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------ app --- -->
+<div id="app" hidden>
+  <header class="top">
+    <div class="top__bar">
+      <span class="brand">
+        <span class="brand__mark" aria-hidden="true">FB</span>
+        <span>
+          <span class="brand__t">Painel</span>
+          <span class="brand__s" id="live">conectando…</span>
+        </span>
+      </span>
+      <nav class="tabs" role="tablist" aria-label="Áreas do painel">
+        <button class="tab" role="tab" id="tabFila" aria-selected="true" aria-controls="paneFila">Fila</button>
+        <button class="tab" role="tab" id="tabMenu" aria-selected="false" aria-controls="paneMenu">Cardápio</button>
+      </nav>
+      <button class="ib ib--plain" type="button" id="btnLogout" title="Sair" aria-label="Sair" data-icon="logout" data-icon-size="22"></button>
+    </div>
+  </header>
+
+  <!-- ------------------------------------------------------- fila --- -->
+  <section id="paneFila" role="tabpanel" aria-labelledby="tabFila">
+    <div class="toolbar">
+      <div class="searchbox">
+        <span class="searchbox__ico" aria-hidden="true" data-icon="search" data-icon-size="18"></span>
+        <input class="input" id="q" type="search" placeholder="Buscar por nome, e-mail ou telefone"
+               aria-label="Buscar pedidos por nome, e-mail ou telefone" autocomplete="off">
+        <button class="ib ib--sm ib--plain" type="button" id="qClear" hidden aria-label="Limpar busca" data-icon="close" data-icon-size="15"></button>
+      </div>
+      <button class="pill" type="button" id="btnCancelled" hidden aria-pressed="false"></button>
+      <span class="toolbar__count" id="qCount"></span>
+    </div>
+
+    <div class="kanban" id="kanban"></div>
+
+    <div class="cancelled" id="cancelledBox" hidden>
+      <div class="sec"><span class="sec__n">✕</span><h2 class="sec__t">Fora do fluxo · cancelados</h2>
+        <span class="sec__c" id="cancelledCount"></span></div>
+      <div class="cancelled__list" id="cancelledList"></div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------- cardápio --- -->
+  <section id="paneMenu" role="tabpanel" aria-labelledby="tabMenu" hidden>
+    <div class="wrap">
+      <div class="sec">
+        <span class="sec__n">01</span>
+        <h2 class="sec__t">Cardápio</h2>
+        <span class="sec__c" id="menuCount"></span>
+      </div>
+      <button class="btn btn--primary" type="button" id="btnNewItem" style="margin-bottom:16px" data-icon="plus" data-icon-size="18">Novo item</button>
+      <div id="menuList"></div>
+    </div>
+  </section>
+</div>
+
+<footer class="ftr">
+  <a class="ftr__a" href="https://www.guara.dev.br" target="_blank" rel="noopener">
+    <img class="ftr__logo" src="assets/logo-guara.svg" alt="" width="24" height="18">
+    <span>Criado por Guara.dev.br</span>
+  </a>
+</footer>
+
+<!-- ---------------------------------------------------- item (CRUD) --- -->
+<dialog id="dlgItem" class="sheet" aria-labelledby="dlgItemTitle">
+  <form id="itemForm" novalidate>
+    <div class="dlg__head">
+      <h2 id="dlgItemTitle">Novo item</h2>
+      <button class="ib ib--plain ib--sm" type="button" id="itemCancel" aria-label="Fechar" data-icon="close" data-icon-size="15"></button>
+    </div>
+    <div class="dlg__body">
+      <label class="field" data-f="category">
+        <span>Categoria</span>
+        <input class="input" name="category" list="cats" placeholder="Salgados" autocomplete="off">
+        <datalist id="cats"></datalist>
+        <p class="field__hint">Vira a seção do cardápio. Em branco, o item cai em “Outros”.</p>
+        <p class="field__err"></p>
+      </label>
+      <label class="field" data-f="label">
+        <span>Nome do item</span>
+        <input class="input" name="label" placeholder="Coxinha de frango" autocomplete="off">
+        <p class="field__err"></p>
+      </label>
+      <label class="field" data-f="description">
+        <span>Descrição <i>(opcional)</i></span>
+        <textarea class="input" name="description" rows="2"></textarea>
+      </label>
+      <label class="field" data-f="price">
+        <span>Preço em reais</span>
+        <input class="input" name="price" inputmode="decimal" placeholder="6,00">
+        <p class="field__err"></p>
+      </label>
+      <div class="field" data-f="image">
+        <span>Foto <i>(opcional, até 5&nbsp;MB)</i></span>
+        <div class="drop">
+          <img id="imgPreview" alt="" hidden>
+          <div id="imgEmpty" class="drop__empty"></div>
+          <input type="file" name="image" id="imgInput" accept="image/*">
+        </div>
+        <p class="field__hint" id="imgHint">Sem foto, o cardápio mostra um espaço reservado.</p>
+      </div>
+    </div>
+    <div class="dlg__foot">
+      <button class="btn btn--ghost" type="button" id="itemCancel2">Cancelar</button>
+      <button class="btn btn--primary" type="submit" id="itemSave">Salvar item</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- -------------------------------------------------------- confirmar --- -->
+<dialog id="dlgConfirm" aria-labelledby="cfTitle">
+  <div class="dlg__head"><h2 id="cfTitle">Confirmar</h2></div>
+  <div class="dlg__body"><p id="cfBody" style="margin:0"></p></div>
+  <div class="dlg__foot">
+    <button class="btn btn--ghost" type="button" id="cfNo">Voltar</button>
+    <button class="btn btn--primary" type="button" id="cfYes">Confirmar</button>
+  </div>
+</dialog>
+
+<script src="assets/core.js"></script>
+<script src="assets/painel.js"></script>
+</body>
+</html>

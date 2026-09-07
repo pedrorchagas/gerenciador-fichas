@@ -1,0 +1,20 @@
+info:
+  name: Registrar usuário
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/register"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "email": "operador@igreja.org",
+        "password": "senha123"
+      }
+
+settings:
+  encodeUrl: true
+​

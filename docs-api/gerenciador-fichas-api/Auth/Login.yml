@@ -1,0 +1,26 @@
+info:
+  name: Login
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/login"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "email": "operador@igreja.org",
+        "password": "senha123"
+      }
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setVar("token", res.body.token);
+
+settings:
+  encodeUrl: true
+​

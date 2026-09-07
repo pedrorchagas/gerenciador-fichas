@@ -1,0 +1,20 @@
+info:
+  name: Atualizar status do pedido
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/pedidos/{{orderId}}/status"
+  auth:
+    type: bearer
+    token: "{{token}}"
+  body:
+    type: json
+    data: |-
+      {
+        "status": "ready"
+      }
+
+settings:
+  encodeUrl: true

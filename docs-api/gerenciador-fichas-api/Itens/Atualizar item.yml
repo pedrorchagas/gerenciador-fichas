@@ -1,0 +1,29 @@
+info:
+  name: Atualizar item
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/itens/{{itemId}}"
+  auth:
+    type: bearer
+    token: "{{token}}"
+  body:
+    type: multipart-form
+    data:
+      - name: name
+        type: text
+        value: Coxinha
+      - name: description
+        type: text
+        value: Coxinha de frango (atualizado)
+      - name: price
+        type: text
+        value: "550"
+      - name: image
+        type: file
+        filepath: ""
+
+settings:
+  encodeUrl: true

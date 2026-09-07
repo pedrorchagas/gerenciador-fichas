@@ -1,0 +1,35 @@
+info:
+  name: Criar item
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/itens"
+  auth:
+    type: bearer
+    token: "{{token}}"
+  body:
+    type: multipart-form
+    data:
+      - name: name
+        type: text
+        value: Coxinha
+      - name: description
+        type: text
+        value: Coxinha de frango
+      - name: price
+        type: text
+        value: "500"
+      - name: image
+        type: file
+        filepath: ""
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setVar("itemId", res.body.itemId);
+
+settings:
+  encodeUrl: true

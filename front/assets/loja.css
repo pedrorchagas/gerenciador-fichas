@@ -1,0 +1,273 @@
+/* =========================================================================
+   loja.css — cardápio público. Mobile primeiro: é assim que o convidado abre.
+   ========================================================================= */
+
+/* -------------------------------------------------- nav de categorias */
+.catnav {
+  display: flex; gap: 8px;
+  padding: 9px 16px;
+  overflow-x: auto;
+  border-bottom: 2px solid var(--line);
+  background: var(--kraft);
+  scrollbar-width: none;
+}
+.catnav::-webkit-scrollbar { display: none; }
+.catnav:empty { display: none; }
+.catnav a {
+  flex: none;
+  font: 600 12px/1 var(--sans);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-2);
+  padding: 8px 11px;
+  border: 1.5px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--paper);
+  white-space: nowrap;
+  scroll-margin-inline: 16px;
+}
+.catnav a:hover { border-color: var(--ink); color: var(--ink); }
+.catnav a[aria-current='true'] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+/* ---------------------------------------------------------- cabeçalho */
+/* Sem régua no rodapé do hero: a da primeira seção já faz esse corte. */
+.hero { padding: 0 0 4px; margin: 0 0 26px; }
+.hero h1 {
+  font: 800 clamp(30px, 9vw, 48px)/.95 var(--display);
+  text-transform: uppercase;
+  letter-spacing: -.035em;
+  margin: 0 0 10px;
+}
+.hero h1 em { font-style: normal; color: var(--red); }
+.hero p { margin: 0; max-width: 46ch; color: var(--ink-2); font-size: 15px; }
+.hero__steps {
+  display: flex; flex-wrap: wrap; gap: 6px 14px;
+  margin: 14px 0 0;
+  padding: 0; list-style: none;
+}
+.hero__steps li {
+  display: flex; align-items: center; gap: 7px;
+  font: 500 12.5px/1 var(--sans);
+  color: var(--ink-2);
+}
+.hero__steps b {
+  font: 700 11px/1 var(--mono);
+  background: var(--yellow); color: var(--ink);
+  width: 20px; height: 20px;
+  display: grid; place-items: center;
+  border-radius: 2px;
+}
+
+/* ------------------------------------------------------ item do menu */
+.cat { margin: 0 0 34px; scroll-margin-top: 122px; }
+
+.items { display: grid; gap: 10px; }
+
+.item {
+  display: grid;
+  grid-template-columns: 74px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border: 2px solid var(--line);
+  border-radius: var(--r-2);
+  background: var(--paper);
+  transition: border-color .12s, transform .12s, box-shadow .12s;
+}
+.item:hover { border-color: var(--ink); transform: translate(-1px, -1px); box-shadow: var(--sh-s); }
+.item--in { border-color: var(--blue); background: var(--blue-2); }
+
+.item__img {
+  width: 74px; height: 74px;
+  border-radius: var(--r);
+  object-fit: cover;
+  background: var(--kraft-2);
+  border: 1px solid var(--line);
+}
+.item__ph {
+  width: 74px; height: 74px;
+  display: grid; place-items: center;
+  border-radius: var(--r);
+  background: var(--kraft-2);
+  border: 1px dashed var(--line-2);
+  color: var(--ink-3);
+}
+.item__b { min-width: 0; }
+.item__n {
+  font: 600 15.5px/1.25 var(--sans);
+  margin: 0 0 3px;
+}
+.item__d {
+  margin: 0 0 5px;
+  font-size: 13px;
+  color: var(--ink-2);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.item__p { font: 700 15px/1 var(--mono); color: var(--red); }
+
+.qty { display: flex; align-items: center; gap: 4px; }
+.qty__n {
+  font: 700 15px/1 var(--mono);
+  min-width: 24px; text-align: center;
+}
+
+/* Coluna flex pro rodapé encostar no fim da tela mesmo com pouco conteúdo. */
+body { display: flex; flex-direction: column; min-height: 100dvh; }
+
+/* ------------------------------------------------------ barra do carrinho */
+.cartbar {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 50;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--paper) 62%, rgba(255, 255, 255, 0));
+}
+.cartbar__btn {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; max-width: 736px; margin: 0 auto;
+  padding: 12px 14px;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-2);
+  background: var(--ink);
+  color: #f7f3e8;
+  box-shadow: var(--sh);
+  text-align: left;
+  transition: transform .1s;
+}
+.cartbar__btn:active { transform: translate(2px, 2px); box-shadow: none; }
+/* a barra é fixa e cobriria o rodapé — só afasta quando ela está na tela */
+.cartbar:not([hidden]) ~ .ftr { padding-bottom: 118px; }
+.cartbar__ico { display: grid; place-items: center; color: var(--yellow); flex: none; }
+.cartbar__txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cartbar__txt b { font: 600 13px/1 var(--sans); }
+.cartbar__txt i { font: 700 17px/1 var(--mono); font-style: normal; color: var(--yellow); }
+.cartbar__cta {
+  flex: none;
+  font: 700 12px/1 var(--sans);
+  letter-spacing: .08em; text-transform: uppercase;
+  background: var(--red); color: #fff;
+  padding: 10px 12px;
+  border-radius: var(--r);
+}
+
+/* --------------------------------------------------- linhas do carrinho */
+.cl { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.cl:last-of-type { border-bottom: 0; }
+.cl__b { flex: 1; min-width: 0; }
+.cl__n { font: 600 14.5px/1.3 var(--sans); }
+.cl__m { font: 500 12px/1 var(--mono); color: var(--ink-3); margin-top: 3px; }
+.cl__p { font: 700 14px/1 var(--mono); min-width: 76px; text-align: right; }
+
+.tot {
+  display: flex; align-items: baseline; justify-content: space-between;
+  border-top: 3px solid var(--ink);
+  margin-top: 12px; padding-top: 12px;
+}
+.tot span { font: 600 12px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; }
+.tot b { font: 700 clamp(22px, 6vw, 27px)/1 var(--mono); color: var(--red); }
+
+/* ---------------------------------------------------------------- ficha */
+.ticket {
+  border: 2px solid var(--ink);
+  border-radius: var(--r-2);
+  background: var(--paper);
+  box-shadow: var(--sh);
+  overflow: hidden;
+  margin: 0 0 18px;
+}
+.ticket__top {
+  background: var(--ink);
+  color: #f7f3e8;
+  padding: 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+/* Classe, não `.ticket__top span`: aquele seletor vencia `.board` por
+   especificidade e quebrava os dígitos do placar. */
+/* Sobre a faixa preta o placar inverte, senão a peça some no fundo. */
+.ticket__top .board b {
+  background: #f7f3e8;
+  color: var(--ink);
+  box-shadow: inset 0 -3px 0 rgba(20, 18, 13, .28);
+}
+.ticket__top .board b::after { background: rgba(20, 18, 13, .16); }
+
+.ticket__lbl {
+  display: block;
+  font: 600 11px/1 var(--sans);
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 10px;
+}
+/* estado sobre a faixa preta do topo: só cores claras (contraste ≥ 7:1) */
+.ticket__st {
+  font: 700 11.5px/1 var(--sans);
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 8px 10px;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  color: var(--yellow);
+  white-space: nowrap;
+}
+.ticket__st--paid, .ticket__st--ready { color: #8fe3ad; }
+.ticket__st--delivered { color: #cfc7b5; }
+.ticket__st--cancelled { color: #ff9d9d; }
+
+/* serrilha: a picotada do canhoto de ficha */
+.ticket__rip {
+  height: 12px;
+  background:
+    radial-gradient(circle at 6px 0, transparent 5.4px, var(--ink) 5.6px) repeat-x 0 0 / 12px 12px;
+  background-color: var(--paper);
+}
+.ticket__body { padding: 16px; }
+
+.pix { text-align: center; padding: 4px 0 0; }
+.pix img {
+  width: min(236px, 62vw); height: auto;
+  margin: 0 auto 14px;
+  border: 2px solid var(--ink);
+  border-radius: var(--r);
+  padding: 8px;
+  background: #fff;
+}
+.pix__code {
+  display: block; width: 100%;
+  font: 500 11.5px/1.45 var(--mono);
+  word-break: break-all;
+  padding: 10px;
+  border: 1.5px dashed var(--line-2);
+  border-radius: var(--r);
+  background: var(--kraft);
+  color: var(--ink-2);
+  max-height: 76px; overflow: auto;
+  text-align: left;
+  margin: 0 0 10px;
+}
+
+.live {
+  display: flex; align-items: center; gap: 9px;
+  font: 500 13px/1.3 var(--sans);
+  color: var(--ink-2);
+  padding: 11px 13px;
+  border-radius: var(--r);
+  background: var(--yellow-2);
+  border: 1.5px solid var(--yellow);
+  margin: 0 0 16px;
+}
+.live--ok  { background: var(--green-2); border-color: #b6e0c6; color: var(--green-d); }
+.live--bad { background: var(--red-2); border-color: #f0bcbc; color: var(--red-d); }
+
+.mine { display: grid; gap: 8px; }
+.mine a {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px;
+  border: 2px solid var(--line);
+  border-radius: var(--r);
+  text-decoration: none; color: inherit;
+  background: var(--paper);
+}
+.mine a:hover { border-color: var(--ink); background: var(--kraft); }
+.mine__b { flex: 1; min-width: 0; }
+.mine__t { font: 600 14px/1.2 var(--sans); }
+.mine__m { font: 500 11.5px/1 var(--mono); color: var(--ink-3); margin-top: 4px; }

@@ -1,0 +1,245 @@
+/* =========================================================================
+   painel.css — operador. Densidade COMPACTA, aplicada a tudo.
+   A vibe vive na moldura (topo, colunas, vazios); o dado fica legível.
+   ========================================================================= */
+
+/* Coluna flex pro rodapé encostar no fim da tela mesmo com pouco conteúdo
+   (o #app e o login se revezam: só um está visível por vez). */
+.painel {
+  background: var(--kraft);
+  display: flex; flex-direction: column;
+  min-height: 100dvh;
+}
+.painel > #app, .painel > .login { flex: 1; }
+
+/* ---------------------------------------------------------------- login */
+.login {
+  display: grid; place-items: center;
+  padding: 20px 16px;
+  background: var(--paper);
+}
+.login__card {
+  width: 100%; max-width: 396px;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-2);
+  overflow: hidden;
+  box-shadow: var(--sh);
+  background: var(--paper);
+}
+.login__inner { padding: 22px 20px 20px; }
+.login__alt {
+  margin: 16px 0 0;
+  font-size: 13.5px; color: var(--ink-2);
+  text-align: center;
+}
+.linkish {
+  border: 0; background: none; padding: 0;
+  color: var(--blue); font: 600 13.5px/1 var(--sans);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* ------------------------------------------------------------ tabs/topo */
+.tabs { display: flex; gap: 6px; margin-left: auto; }
+.tab {
+  font: 600 12.5px/1 var(--sans);
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 9px 12px;
+  border: 2px solid var(--line-2);
+  border-radius: var(--r);
+  background: var(--paper);
+  color: var(--ink-2);
+}
+.tab[aria-selected='true'] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+/* lâmpada do tempo real */
+.brand__s::before {
+  content: '';
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--ink-3);
+  margin-right: 6px;
+  vertical-align: baseline;
+}
+.brand__s.is-live::before { background: #16a34a; box-shadow: 0 0 0 3px rgba(22, 163, 74, .18); }
+.brand__s.is-poll::before { background: var(--yellow); }
+.brand__s.is-off::before  { background: var(--red); }
+
+/* ------------------------------------------------------------- toolbar */
+.toolbar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--paper);
+  border-bottom: 2px solid var(--line);
+  position: sticky; top: 0; z-index: 30;
+}
+.searchbox { position: relative; flex: 1 1 260px; display: flex; align-items: center; }
+.searchbox__ico {
+  position: absolute; left: 11px;
+  display: grid; place-items: center;
+  color: var(--ink-3); pointer-events: none;
+}
+.searchbox .input { padding-left: 38px; padding-right: 38px; }
+.searchbox .ib { position: absolute; right: 4px; }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  font: 600 12px/1 var(--sans);
+  letter-spacing: .05em; text-transform: uppercase;
+  padding: 9px 12px;
+  border: 2px solid var(--red);
+  border-radius: 999px;
+  background: var(--red-2);
+  color: var(--red-d);
+}
+.pill[aria-pressed='true'] { background: var(--red); color: #fff; }
+
+.toolbar__count { font: 500 12px/1 var(--mono); color: var(--ink-3); margin-left: auto; }
+
+/* -------------------------------------------------------------- kanban */
+.kanban {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(268px, 1fr);
+  gap: 12px;
+  padding: 14px 16px 26px;
+  overflow-x: auto;                    /* o scroll fica na régua, não na página */
+  scroll-snap-type: x proximity;
+  align-items: start;
+}
+@media (min-width: 1080px) {
+  .kanban { grid-auto-columns: 1fr; overflow-x: visible; }
+}
+
+.col {
+  scroll-snap-align: start;
+  min-width: 0;
+  display: flex; flex-direction: column;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-2);
+  max-height: calc(100dvh - 168px);
+}
+.col__head {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; align-items: center; gap: 9px;
+  padding: 10px 11px;
+  border-bottom: 3px solid var(--ink);
+  background: var(--kraft);
+  border-radius: 4px 4px 0 0;
+}
+.col__n {
+  font: 700 11px/1 var(--mono);
+  background: var(--ink); color: var(--paper);
+  padding: 5px 6px; border-radius: 2px;
+}
+.col__t {
+  font: 700 14.5px/1 var(--display);
+  text-transform: uppercase; letter-spacing: -.01em;
+  margin: 0; flex: 1;
+}
+.col__c {
+  font: 700 12px/1 var(--mono);
+  min-width: 24px; text-align: center;
+  padding: 5px 6px; border-radius: 2px;
+  background: var(--yellow); color: var(--ink);
+}
+.col--paid      .col__c { background: var(--blue); color: #fff; }
+.col--ready     .col__c { background: #16a34a; color: #fff; }
+.col--delivered .col__c { background: var(--kraft-2); color: var(--ink-2); }
+
+.col__body { padding: 10px; overflow-y: auto; display: grid; gap: 9px; }
+.col__hint {
+  font: 500 10.5px/1 var(--mono);
+  color: var(--ink-3);
+  padding: 0 11px 9px;
+  border-bottom: 1px solid var(--line);
+  background: var(--kraft);
+}
+
+/* ------------------------------------------------------ card de pedido */
+.o {
+  border: 1.5px solid var(--line-2);
+  border-radius: var(--r);
+  background: var(--paper);
+  padding: 9px;
+  animation: cardin .2s ease-out;
+}
+@keyframes cardin { from { opacity: 0; transform: translateY(-5px); } }
+.o.is-new { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-2); }
+
+.o__top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.o__when { font: 500 11px/1 var(--mono); color: var(--ink-3); margin-left: auto; }
+
+.o__name {
+  font: 600 14.5px/1.25 var(--sans);
+  margin: 0 0 5px;
+  overflow-wrap: anywhere;
+}
+.o__contact { display: grid; gap: 2px; margin: 0 0 8px; }
+.o__contact a {
+  font: 500 12px/1.35 var(--mono);
+  color: var(--ink-2);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.o__contact a:hover { color: var(--blue); text-decoration: underline; }
+
+.o__items {
+  font: 400 12.5px/1.45 var(--sans);
+  color: var(--ink-2);
+  background: var(--kraft);
+  border-radius: 3px;
+  padding: 7px 8px;
+  margin: 0 0 8px;
+}
+.o__items b { font: 700 12px/1 var(--mono); color: var(--ink); }
+
+.o__foot { display: flex; align-items: center; gap: 6px; }
+.o__total { font: 700 14px/1 var(--mono); color: var(--red); flex: 1; }
+
+/* -------------------------------------------------------- cancelados */
+.cancelled { padding: 0 16px 34px; max-width: 900px; }
+.cancelled__list { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.cancelled .o { opacity: .72; border-style: dashed; }
+
+/* -------------------------------------------------------- cardápio ADM */
+.mitem {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 11px; align-items: center;
+  padding: 9px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--r);
+  background: var(--paper);
+  margin-bottom: 8px;
+}
+.mitem img, .mitem .item__ph {
+  width: 56px; height: 56px; border-radius: 3px; object-fit: cover;
+  background: var(--kraft-2); border: 1px solid var(--line);
+  display: grid; place-items: center; color: var(--ink-3);
+}
+.mitem__b { min-width: 0; }
+.mitem__c {
+  font: 600 10px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 3px;
+}
+.mitem__n { font: 600 14.5px/1.25 var(--sans); }
+.mitem__p { font: 700 13px/1 var(--mono); color: var(--red); margin-top: 4px; }
+.mitem__a { display: flex; gap: 5px; }
+
+/* upload */
+.drop { position: relative; border: 2px dashed var(--line-2); border-radius: var(--r); background: var(--kraft); overflow: hidden; }
+.drop__empty {
+  display: grid; place-items: center; gap: 6px;
+  min-height: 96px;
+  font: 500 12.5px/1 var(--sans); color: var(--ink-3);
+}
+.drop img { width: 100%; max-height: 190px; object-fit: contain; background: var(--paper); }
+.drop input[type=file] {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; cursor: pointer;
+}
+.drop:focus-within { border-color: var(--ink); }
+
+.field > span i { font-style: normal; text-transform: none; letter-spacing: 0; color: var(--ink-3); }

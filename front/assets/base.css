@@ -1,0 +1,398 @@
+/* =========================================================================
+   base.css — "Quermesse Suíça"
+   Colisão: barraca de festa junina (kraft, bandeirinha, giz)
+          × sinalização ferroviária suíça (grid rígido, condensada, seções
+            numeradas, régua grossa, zero ornamento).
+   Wildcard: nº da ficha em dígitos de placar mecânico de estação.
+   Base branca; amarelo/vermelho/azul só em ação, estado e destaque.
+   ========================================================================= */
+
+/* ------------------------------------------------------------- 1. tokens */
+:root {
+  /* superfícies — branco predomina, kraft é o acento de papel */
+  --paper:    #ffffff;
+  --kraft:    #faf6ee;
+  --kraft-2:  #f3ebdb;
+  --line:     #e2d8c5;
+  --line-2:   #cdbfa5;
+
+  /* tinta */
+  --ink:      #14120d;
+  --ink-2:    #57503f;
+  --ink-3:    #8b8271;
+
+  /* auxiliares (contraste conferido: ink sobre yellow 13:1;
+     paper sobre red 6.0:1; paper sobre blue 6.8:1) */
+  --yellow:   #f5c518;
+  --yellow-2: #fdf4d3;
+  --yellow-d: #7a5f00;
+  --red:      #c81e1e;
+  --red-2:    #fbe9e9;
+  --red-d:    #8f1414;
+  --blue:     #1d4ed8;
+  --blue-2:   #e7edfd;
+  --blue-d:   #16389c;
+  --green-d:  #14532d;
+  --green-2:  #e3f5e9;
+
+  /* tipografia */
+  --display: 'Archivo', 'Archivo Black', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --sans:    'Instrument Sans', ui-sans-serif, system-ui, 'Segoe UI', Arial, sans-serif;
+  --mono:    'Azeret Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  /* grid suíço: raios mínimos, sombra dura sem blur */
+  --r:   3px;
+  --r-2: 6px;
+  --sh:  3px 3px 0 var(--ink);
+  --sh-s: 2px 2px 0 var(--ink);
+}
+
+/* Modo escuro recusado deliberadamente: a identidade inteira é papel kraft
+   sob luz de lâmpada de quintal. Invertida, ela some. */
+
+/* -------------------------------------------------------------- 2. reset */
+*, *::before, *::after { box-sizing: border-box; }
+/* Todo `display:` de classe vence o `hidden` do user-agent. Sem isto, o
+   login continua na tela por trás do painel. */
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 16px/1.5 var(--sans);
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: var(--blue); }
+
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ------------------------------------------- 4. suíço: seções numeradas */
+.sec {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-top: 3px solid var(--ink);
+  padding: 10px 0 8px;
+  margin: 0 0 14px;
+}
+.sec__n {
+  font: 700 13px/1 var(--mono);
+  color: var(--paper);
+  background: var(--ink);
+  padding: 5px 6px;
+  border-radius: 2px;
+  letter-spacing: .02em;
+  flex: none;
+}
+.sec__t {
+  font: 700 clamp(20px, 5.2vw, 27px)/1 var(--display);
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+  margin: 0;
+  flex: 1;
+}
+.sec__c {
+  font: 500 12px/1 var(--mono);
+  color: var(--ink-3);
+  flex: none;
+}
+
+/* ------------------------------------------ 5. wildcard: placar mecânico */
+.board { display: inline-flex; gap: 3px; vertical-align: middle; }
+.board b {
+  display: inline-grid; place-items: center;   /* inline + padding vaza a linha */
+  font: 700 clamp(15px, 3.6vw, 18px)/1 var(--mono);
+  background: var(--ink);
+  color: #f7f3e8;
+  min-width: 1.25em;
+  padding: 7px 4px 8px;
+  border-radius: 2px;
+  text-align: center;
+  position: relative;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .5);
+}
+.board b::after {
+  content: '';
+  position: absolute; left: 0; right: 0; top: 50%;
+  height: 1px;
+  background: rgba(255, 255, 255, .18);
+}
+.board--sm b { font-size: 13px; padding: 4px 3px 5px; }
+.board--lg b { font-size: clamp(24px, 8vw, 34px); padding: 12px 8px 14px; }
+
+/* -------------------------------------------------------------- 6. botões */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font: 600 15px/1 var(--sans);
+  padding: 12px 18px;
+  border: 2px solid var(--ink);
+  border-radius: var(--r);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--sh-s);
+  transition: transform .08s, box-shadow .08s, background .12s;
+}
+.btn:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: var(--sh); }
+.btn:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: none; }
+.btn:disabled { opacity: .42; cursor: not-allowed; box-shadow: none; }
+
+.btn--primary { background: var(--red); color: var(--paper); border-color: var(--ink); }
+.btn--go      { background: var(--blue); color: var(--paper); }
+.btn--mark    { background: var(--yellow); color: var(--ink); }
+.btn--ghost   { box-shadow: none; border-color: var(--line-2); background: transparent; }
+.btn--ghost:hover:not(:disabled) { background: var(--kraft); box-shadow: none; transform: none; }
+.btn--block   { width: 100%; }
+.btn--sm      { padding: 8px 12px; font-size: 14px; }
+
+/* botão-ícone quadrado (setas do kanban, +/- do carrinho) */
+.ib {
+  display: inline-grid; place-items: center;
+  width: 38px; height: 38px;
+  border: 2px solid var(--ink);
+  border-radius: var(--r);
+  background: var(--paper);
+  color: var(--ink);
+  transition: background .12s, color .12s, transform .08s;
+}
+.ib:hover:not(:disabled) { background: var(--yellow); }
+.ib:active:not(:disabled) { transform: translateY(1px); }
+.ib:disabled { opacity: .3; cursor: not-allowed; }
+.ib--go { background: var(--blue); border-color: var(--blue); color: var(--paper); }
+.ib--go:hover:not(:disabled) { background: var(--blue-d); }
+.ib--sm { width: 32px; height: 32px; }
+.ib--plain { border-color: transparent; box-shadow: none; }
+.ib--plain:hover:not(:disabled) { background: var(--kraft-2); }
+
+/* --------------------------------------------------------------- 7. campos */
+.field { display: block; margin: 0 0 14px; }
+.field > span {
+  display: block;
+  font: 600 11px/1 var(--sans);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0 0 6px;
+}
+.input {
+  width: 100%;
+  padding: 12px 13px;
+  border: 2px solid var(--line-2);
+  border-radius: var(--r);
+  background: var(--paper);
+  transition: border-color .12s;
+}
+.input:focus { border-color: var(--ink); outline-offset: 1px; }
+.input[aria-invalid='true'] { border-color: var(--red); background: var(--red-2); }
+textarea.input { resize: vertical; min-height: 74px; }
+.field__err {
+  display: none;
+  font: 500 13px/1.35 var(--sans);
+  color: var(--red-d);
+  margin: 5px 0 0;
+}
+.field--bad .field__err { display: block; }
+.field__hint { font: 400 12.5px/1.4 var(--sans); color: var(--ink-3); margin: 5px 0 0; }
+
+.row { display: grid; gap: 0 12px; grid-template-columns: 1fr 1fr; }
+@media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+
+/* --------------------------------------------------------------- 8. chips */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font: 600 11.5px/1 var(--sans);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 6px 9px;
+  border-radius: 999px;
+  border: 1.5px solid currentColor;
+  white-space: nowrap;
+}
+.chip--pending   { color: var(--yellow-d); background: var(--yellow-2); }
+.chip--paid      { color: var(--blue-d);   background: var(--blue-2); }
+.chip--ready     { color: var(--green-d);  background: var(--green-2); }
+.chip--delivered { color: var(--ink-2);    background: var(--kraft-2); }
+.chip--cancelled { color: var(--red-d);    background: var(--red-2); }
+
+/* --------------------------------------------------------------- 9. cards */
+.card {
+  border: 2px solid var(--ink);
+  border-radius: var(--r-2);
+  background: var(--paper);
+  box-shadow: var(--sh-s);
+}
+
+/* ------------------------------------------------------------- 10. estados */
+.state {
+  text-align: center;
+  padding: 34px 20px;
+  border: 2px dashed var(--line-2);
+  border-radius: var(--r-2);
+  background: var(--kraft);
+  color: var(--ink-2);
+}
+.state h3 {
+  font: 700 17px/1.2 var(--display);
+  text-transform: uppercase;
+  letter-spacing: -.01em;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+.state p { margin: 0 0 14px; font-size: 14px; }
+.state p:last-child { margin-bottom: 0; }
+.state--err { border-color: var(--red); background: var(--red-2); }
+.state--sm { padding: 20px 14px; }
+
+.skel {
+  border-radius: var(--r);
+  background: linear-gradient(90deg, var(--kraft-2) 25%, var(--kraft) 50%, var(--kraft-2) 75%);
+  background-size: 300% 100%;
+  animation: shimmer 1.3s linear infinite;
+}
+@keyframes shimmer { to { background-position: -300% 0; } }
+
+.spin {
+  width: 16px; height: 16px; flex: none;
+  border: 2.5px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ------------------------------------------------------------- 11. diálogo */
+dialog {
+  border: 2px solid var(--ink);
+  border-radius: var(--r-2);
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 6px 6px 0 rgba(20, 18, 13, .22);
+  max-width: min(560px, calc(100vw - 24px));
+  width: 100%;
+}
+dialog::backdrop { background: rgba(20, 18, 13, .5); }
+.dlg__head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 2px solid var(--ink);
+  background: var(--kraft);
+  position: sticky; top: 0; z-index: 2;
+}
+.dlg__head h2 {
+  font: 700 19px/1.1 var(--display);
+  text-transform: uppercase; letter-spacing: -.01em;
+  margin: 0; flex: 1;
+}
+.dlg__body { padding: 16px; max-height: min(66vh, 560px); overflow-y: auto; }
+.dlg__foot {
+  display: flex; gap: 10px; justify-content: flex-end;
+  padding: 13px 16px;
+  border-top: 2px solid var(--line);
+  background: var(--kraft);
+  position: sticky; bottom: 0;
+}
+.dlg__foot .btn { flex: 1; }
+@media (min-width: 560px) { .dlg__foot .btn { flex: 0 1 auto; } }
+
+/* bottom sheet no celular */
+@media (max-width: 559px) {
+  dialog.sheet {
+    margin: auto auto 0;
+    max-width: 100vw;
+    border-radius: var(--r-2) var(--r-2) 0 0;
+    border-bottom: 0;
+    animation: rise .22s cubic-bezier(.2, .8, .3, 1);
+  }
+  @keyframes rise { from { transform: translateY(14px); opacity: .4; } }
+}
+
+/* -------------------------------------------------------------- 12. toasts */
+.toasts {
+  position: fixed; left: 12px; right: 12px; bottom: 12px;
+  z-index: 90;
+  display: flex; flex-direction: column; gap: 8px; align-items: center;
+  pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  max-width: 460px; width: 100%;
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 11px 14px;
+  border: 2px solid var(--ink);
+  border-radius: var(--r);
+  background: var(--ink);
+  color: #f7f3e8;
+  font-size: 14px;
+  box-shadow: var(--sh-s);
+  opacity: 1;
+  transition: opacity .3s;
+  animation: pop .18s ease-out;
+}
+.toast b { font: 700 12px/1.3 var(--sans); letter-spacing: .04em; text-transform: uppercase; }
+.toast--ok  { background: var(--blue); border-color: var(--blue-d); color: #fff; }
+.toast--err { background: var(--red); border-color: var(--red-d); color: #fff; }
+@keyframes pop { from { transform: translateY(8px); opacity: 0; } }
+
+/* ------------------------------------------------------- 13. topo (shell) */
+.top { position: sticky; top: 0; z-index: 40; background: var(--paper); }
+.top__bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px;
+  border-bottom: 3px solid var(--ink);
+  background: var(--paper);
+}
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; text-decoration: none; color: inherit; }
+.brand__mark {
+  width: 34px; height: 34px; flex: none;
+  display: grid; place-items: center;
+  background: var(--red); color: var(--paper);
+  border-radius: var(--r);
+  font: 800 15px/1 var(--display);
+}
+.brand__t {
+  display: block;
+  font: 700 clamp(15px, 4vw, 18px)/1 var(--display);
+  text-transform: uppercase; letter-spacing: -.02em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.brand__s {
+  display: block;
+  font: 500 10.5px/1 var(--mono);
+  color: var(--ink-3); letter-spacing: .08em; text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.wrap { max-width: 760px; margin: 0 auto; padding: 20px 16px 28px; }
+
+/* ------------------------------------------------------------- rodapé */
+.ftr {
+  margin-top: auto;                 /* cola no fim da página, não no do conteúdo */
+  border-top: 3px solid var(--ink);
+  padding: 16px;
+  text-align: center;
+}
+.ftr__a {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--ink-2);
+  font: 500 12.5px/1 var(--sans);
+  text-decoration: none;
+}
+.ftr__a:hover span { text-decoration: underline; text-underline-offset: 3px; }
+.ftr__logo { width: 24px; height: auto; flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
