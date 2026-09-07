@@ -26,6 +26,7 @@ async function uploadItemImage(itemId, file) {
     Key: key,
     Body: file.buffer,
     ContentType: file.mimetype,
+    ACL: 'public-read', // foto de cardápio é exibida sem login; URL fixa e cacheável
   }));
 
   return key;

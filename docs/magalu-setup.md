@@ -136,27 +136,83 @@ No console → **Object Storage** → *Criar bucket*:
 |---|---|
 | Nome | `sistema-feira` (o que você usar vai no `MGC_BUCKET`) |
 | Região | `br-se1` |
-| Acesso | **Público para leitura** |
+| Acesso | **Público para leitura** (não basta sozinho — ver abaixo) |
 
-O bucket precisa ser público porque as fotos do cardápio são exibidas pra
-qualquer visitante, sem login — a URL é fixa e cacheável, o que evita gerar URL
-assinada a cada exibição. **Só imagens de item vão pra esse bucket**; nada
-sensível.
+As fotos do cardápio são exibidas pra qualquer visitante, sem login — a URL é
+fixa e cacheável, o que evita gerar URL assinada a cada exibição. **Só imagens
+de item vão pra esse bucket**; nada sensível.
 
-Se o painel oferecer política de bucket em JSON, a permissão mínima é leitura
-anônima só no prefixo das imagens:
+### Deixar as imagens públicas — não precisa configurar nada
+
+Duas armadilhas fazem o `npm run smoke` devolver `403` num bucket novo. As duas
+já estão resolvidas; é só não reintroduzir:
+
+1. **O objeto não herda o "público" do bucket.** Na Magalu quem manda no objeto
+   é a ACL dele — marcar o bucket como público no console não libera nada. O
+   upload já sobe cada imagem com `ACL: public-read`
+   ([storageService.js](../gerenciador-fichas/services/storageService.js)), e é
+   só isso que precisa acontecer.
+2. **`MGC_ENDPOINT` fica vazio.** O console exibe o bucket como
+   `https://<bucket>.br-se1.magaluobjects.com`; colar isso no `.env` duplica o
+   bucket na URL (`.../<bucket>/<bucket>/itens/...`) e o `GET` também dá `403`.
+   O endpoint certo é o da região, que o código monta sozinho.
+
+Bucket criado + `.env` preenchido + `npm start` = imagem abrindo. Sem policy,
+sem tenant-id, sem CLI.
+
+<details>
+<summary>Policy de bucket — só se precisar liberar imagens já subidas sem ACL</summary>
+
+**A policy da Magalu não é a da AWS**, e ela cobra caro o descuido:
+
+- `Resource` é `nome-do-bucket/*`, **sem** `arn:aws:s3:::`;
+- assim que existe uma policy, ela **sobrepõe as ACLs** — inclusive as suas. Sem
+  um statement pro seu próprio tenant, a API key da aplicação passa a levar
+  `AccessDeniedByBucketPolicy` no upload e o sistema quebra. Os dois statements
+  andam juntos:
 
 ```json
 {
   "Version": "2012-10-17",
-  "Statement": [{
-    "Effect": "Allow",
-    "Principal": "*",
-    "Action": "s3:GetObject",
-    "Resource": "arn:aws:s3:::sistema-feira/itens/*"
-  }]
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "sistema-feira/itens/*"
+    },
+    {
+      "Effect": "Allow",
+      "Principal": { "MGC": ["SEU-TENANT-ID"] },
+      "Action": "s3:*",
+      "Resource": ["sistema-feira", "sistema-feira/*"]
+    }
+  ]
 }
 ```
+
+`SEU-TENANT-ID` é o UUID da sua conta na Magalu (não é a API key) — o mesmo do
+header `x-tenant-id` da API:
+
+```bash
+mgc auth tenant current                                              # campo uuid da saída
+mgc object-storage buckets policy set --dst sistema-feira --policy @./policy.json
+```
+
+Com policy aplicada o console passa a exibir o bucket como "privado" mesmo
+funcionando — é cosmético, confie no `npm run smoke`.
+
+**Na dúvida se existe uma**, e como tirar:
+
+```bash
+mgc object-storage buckets policy get    --dst sistema-feira   # o que está valendo
+mgc object-storage buckets policy delete --dst sistema-feira   # volta pro caminho ACL
+```
+
+Regra: **ACL ou policy, não os dois.** Uma policy incompleta herdada de um teste
+antigo é a causa mais chata de `403` — o console não mostra que ela existe.
+
+</details>
 
 ### Credenciais
 
@@ -200,7 +256,11 @@ MGC_REGION=br-se1
 MGC_BUCKET=sistema-feira
 MGC_ACCESS_KEY_ID=<api key da Magalu>
 MGC_SECRET_ACCESS_KEY=<secret da api key>
+MGC_ENDPOINT=
 ```
+
+Deixe `MGC_ENDPOINT` **vazio** — é a URL da região, não a do bucket. Ver a
+armadilha 2 da [seção 2](#deixar-as-imagens-públicas--não-precisa-configurar-nada).
 
 `chmod 600 .env` — o arquivo tem a senha do banco e o token de produção do
 Mercado Pago.
@@ -226,6 +286,11 @@ Seguro rodar em produção.
 
 Se o object storage não estiver configurado, ele pula essa parte e valida só o
 banco.
+
+**`403` na imagem?** É uma das duas armadilhas da
+[seção 2](#deixar-as-imagens-públicas--não-precisa-configurar-nada). Olhe a URL
+que o erro imprime: bucket aparecendo duas vezes é `MGC_ENDPOINT` preenchido;
+URL correta é ACL — confira se o `storageService.js` está atualizado.
 
 Depois, o fluxo manual de sempre:
 
@@ -261,6 +326,7 @@ O `systemd`, o Caddy pro TLS e o checklist pré-festa valem sem mudança.
 - [ ] `DATABASE_URL` apontando pra `localhost`, `DB_SSL=false` (senha URL-encoded se tiver caractere especial)
 - [ ] `npm run setup:tables` rodado — 3 tabelas criadas
 - [ ] Bucket criado, **público para leitura**, na mesma região do banco
+- [ ] `MGC_ENDPOINT` **vazio** no `.env` (a URL do bucket do console não serve)
 - [ ] API key da Magalu gerada, secret guardada, `.env` com `chmod 600`
 - [ ] `npm run smoke` passando, incluindo a parte do object storage
 - [ ] `JWT_SECRET` e `REGISTER_SECRET` de produção, diferentes dos de dev
