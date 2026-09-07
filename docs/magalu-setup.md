@@ -303,19 +303,15 @@ Depois, o fluxo manual de sempre:
 
 ## 5. Deploy da aplicação
 
-Continua igual ao [deploy.md](deploy.md), com três ajustes:
+VM, Node, clone do repositório, systemd, TLS com Caddy e o deploy por `git
+pull`: tudo em [deploy.md](deploy.md).
 
-- **A VM**: Magalu Cloud → *Virtual Machine*, imagem Ubuntu, 2 vCPU / 2 GB. O
-  perfil de carga é o mesmo descrito lá — a máquina é quase só I/O. Com o
-  PostgreSQL junto na máquina, 2 GB continua folgado (o banco aqui tem algumas
-  centenas de linhas), mas não desça pra 1 GB.
-- **Sem IAM role**: as credenciais vão no `.env` (seção 3), não numa role.
-- **Uma instância só.** O motivo não mudou de provedor: o Socket.IO faz
-  `io.emit` no processo local, então com 2+ instâncias o painel de um operador
-  não recebe o pedido confirmado na outra — em silêncio, sem erro. Ver
-  [WebSocket atrás do LB](deploy.md#websocket-atrás-do-lb-o-único-problema-real).
+Dois pontos daqui que importam lá:
 
-O `systemd`, o Caddy pro TLS e o checklist pré-festa valem sem mudança.
+- **Não existe IAM role na Magalu** — as credenciais do bucket vivem no `.env`
+  (seção 3), não numa role da máquina.
+- **Uma instância só**, pelo Socket.IO — ver
+  [Uma instância só](deploy.md#9-uma-instância-só).
 
 ---
 

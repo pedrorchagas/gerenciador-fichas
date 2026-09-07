@@ -1,6 +1,6 @@
 # Handoff — gerenciador de fichas (festa beneficente)
 
-Última atualização: 2026-09-06, ao fim da sessão que construiu o front inteiro (loja pública + painel do operador) em `front/`. Este documento existe pra qualquer pessoa (ou agente) que continue o trabalho sem ter visto a conversa original. Leia isto primeiro; para o detalhe de arquitetura/modelagem, veja [core-plan.md](core-plan.md); para o contrato de rotas que o front consome, veja [api-contract.md](api-contract.md); **para tudo que foi decidido no front, veja [front-handoff.md](front-handoff.md)**; para colocar isso no ar, veja [magalu-setup.md](magalu-setup.md) (infraestrutura Magalu Cloud) e [deploy.md](deploy.md) (deploy da app — as seções de AWS estão desatualizadas, o resto vale).
+Última atualização: 2026-09-06, ao fim da sessão que construiu o front inteiro (loja pública + painel do operador) em `front/`. Este documento existe pra qualquer pessoa (ou agente) que continue o trabalho sem ter visto a conversa original. Leia isto primeiro; para o detalhe de arquitetura/modelagem, veja [core-plan.md](core-plan.md); para o contrato de rotas que o front consome, veja [api-contract.md](api-contract.md); **para tudo que foi decidido no front, veja [front-handoff.md](front-handoff.md)**; para colocar isso no ar, veja [magalu-setup.md](magalu-setup.md) (infraestrutura Magalu Cloud) e [deploy.md](deploy.md) (VM, systemd, TLS e deploy por `git pull` — reescrito em 2026-09-07 pra Magalu Cloud).
 
 ## O que é o projeto
 
@@ -120,7 +120,7 @@ docs/core-plan.md                      plano de arquitetura detalhado (banco, mo
 docs/handoff.md                        este arquivo
 docs/api-contract.md                   rotas/formatos que o front consome — sessão 2026-09-05
 docs/magalu-setup.md                   como configurar banco e object storage na Magalu Cloud — sessão 2026-09-07
-docs/deploy.md                         deploy da app (partes de AWS desatualizadas)
+docs/deploy.md                         VM, systemd, Caddy/TLS, deploy por git pull — Magalu Cloud
 docs/front-handoff.md                  decisões do front
 ```
 
