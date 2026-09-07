@@ -143,7 +143,7 @@
       '<ul class="hero__steps">' +
         '<li><b>1</b> Monte o pedido</li>' +
         '<li><b>2</b> Pague no Pix</li>' +
-        '<li><b>3</b> Retire no caixa</li>' +
+        '<li><b>3</b> Retire suas fichas no caixa</li>' +
       '</ul>' +
     '</div>';
   }
