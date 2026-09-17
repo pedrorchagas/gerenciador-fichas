@@ -1,11 +1,12 @@
-# Gerenciador de fichas
+![Claude Code](https://img.shields.io/badge/Claude%20Code-%23D97757.svg?style=for-the-badge&logo=claudecode&logoColor=white)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![ESLint](https://img.shields.io/badge/ESLint-%234B3263.svg?style=for-the-badge&logo=eslint&logoColor=white)
 
-Sistema de pedidos e pagamento por Pix para a festa beneficente de uma igreja.
-Substitui a ficha de papel: o cliente monta o pedido no celular, paga o Pix e
-recebe um número; o operador vê o pedido cair num quadro em tempo real e
-acompanha até a entrega.
+# Sistema Gerenciador de fichas
+Um sistema para gerenciamento e venda de fichas de alimentos para uma festa beneficente que acontece na igreja que congrego. O objetivo é otimizar a venda das fichas para que as pessoas possam aproveitar mais a festa ao invés de ficar em pé em uma fila.
 
-Rodou em produção na festa de **7 a 12 de setembro de 2026**.
+Esse sistema rodou em produção durante uma noite no dia 12/09
 
 ## Resultado em produção
 
@@ -33,45 +34,17 @@ Por categoria (só pedidos pagos):
 | Feijão Tropeiro | 12 | R$ 120,00 |
 | Picolés | 19 | R$ 62,00 |
 
-Números extraídos com [`scripts/relatorio-festa.sql`](scripts/relatorio-festa.sql)
-(`psql "$DATABASE_URL" -f scripts/relatorio-festa.sql`).
+## Como funciona?
+O cliente acessa o nosso cardápio digital pelo navegador do celular, pelo site ele consegue ver todos os produtos disponíveis e criar o pedido de fichas. Ao finalizar o pedido um QR Code do Pix é gerado e apresentado em tela. Ao mesmo tempo a notificação é inserida em um quadro kanban no painel da administração que acompanha todo o processo de criação, pagamento, separação e entrega das fichas. 
 
-## Como funciona
+## Stack utilizada
+Utilizei nesse projeto NodeJS + Express, PostgreSQL via Sequelize, integração webhook com Mercado Pago, Object Storage da Magalu Cloud, front em HTML/CSS/JS.
 
+Tudo rodando em uma máquina virtual na Magalu Cloud. 
+
+## Rode o projeto localmente
+Se você for um curioso, você pode rodar o projeto localmente e ver como tudo funciona.
 ```
-Cliente (celular)                    Operador (balcão)
-      │                                     │
-   cardápio                              kanban
-      │  POST /pedidos                       ↑ Socket.IO: pedidoAtualizado
-      ▼                                      │
-  QR Pix ──> Mercado Pago ──webhook──> status = paid
-```
-
-**Loja pública** — cardápio por categorias, carrinho no `localStorage`, pedido
-gera QR code Pix de verdade na resposta do `POST /pedidos`, e a tela faz poll
-até o pagamento confirmar. Sem login.
-
-**Painel do operador** — login JWT, quadro kanban de quatro colunas
-(`pending → paid → ready → delivered`) que se move sozinho via WebSocket, busca
-pelo nº da ficha, e CRUD do cardápio com upload de foto.
-
-O nº da ficha são os 5 últimos caracteres do `orderId` em maiúsculas — curto o
-bastante pra gritar no balcão, e a API não precisou de sequência.
-
-## Stack
-
-Node + Express · PostgreSQL via Sequelize · Socket.IO · Mercado Pago (Orders
-API, Pix) · Object Storage da Magalu (compatível com S3, mesmo
-`@aws-sdk/client-s3`) · front em **HTML/CSS/JS puro** — sem framework, sem build
-step, sem CDN de biblioteca.
-
-Tudo numa VM só: um processo Node atrás do Caddy, Postgres em `localhost`.
-Nada de Docker, PM2 ou cluster — o `io.emit` é local ao processo, então escalar
-horizontalmente quebraria o tempo real em silêncio ([deploy.md](docs/deploy.md#9-uma-instância-só)).
-
-## Rodar local
-
-```bash
 npm ci
 cp .env.example .env    # preencha: JWT_SECRET, REGISTER_SECRET, Mercado Pago, DATABASE_URL, bucket
 npm run setup:tables    # sequelize.sync(), idempotente
@@ -79,75 +52,16 @@ npm run smoke           # valida banco + object storage de ponta a ponta e limpa
 npm start
 ```
 
-- Loja → <http://localhost:3000/>
-- Painel → <http://localhost:3000/painel.html>
+Acessos:
+- Loja: http://localhost:3000/
+- Painel ADM: http://localhost:3000/painel.html
 
-O front é servido pelo próprio Express. É de propósito: a API não manda header
-`Access-Control-*` nenhum, e servir pela mesma origem resolve CORS e o WebSocket
-de uma vez.
+## Como foi construído:
+Desenvolvi o projeto com auxílio de IA (Claude, via Claude Code), mas com um workflow bem definido.
+O processo foi o seguinte: 
+- Antes de tudo, defini bem todos os requisitos que precisava (Uma abstração de spec-driven-development), stack e outras informações necessárias para a IA.
+- Criei toda a estrutura de pastas e arquivos.
+- Configurei o linter em uma estrutura que já conheço.
+- Após tudo bem definido o código foi gerado com a IA.
 
-```bash
-node front/test.js   # 61 asserções da lógica pura (categorias, esteira, busca, formatação)
-npx eslint .         # airbnb-base no backend (front fica de fora, é código de browser)
-```
-
-Coleção Bruno pra bater na API na mão em [`docs-api/`](docs-api/) — o request
-"Login" já salva o token nas variáveis do environment.
-
-## Documentação
-
-Escrita durante o desenvolvimento, não depois. Cada documento registra **o que
-foi decidido e por quê**, incluindo o que deu errado:
-
-| | |
-|---|---|
-| [`docs/handoff.md`](docs/handoff.md) | Visão geral, histórico de sessões, bugs e descobertas. **Comece por aqui.** |
-| [`docs/api-contract.md`](docs/api-contract.md) | Rotas, formatos, erros, contrato do WebSocket |
-| [`docs/core-plan.md`](docs/core-plan.md) | Arquitetura e modelagem (parte de infra é histórica — ver aviso no topo) |
-| [`docs/front-handoff.md`](docs/front-handoff.md) | Decisões do front, design, armadilhas |
-| [`docs/magalu-setup.md`](docs/magalu-setup.md) | Banco e Object Storage na Magalu Cloud |
-| [`docs/deploy.md`](docs/deploy.md) | VM, systemd, TLS, deploy por `git pull`, backup |
-| [`front/README.md`](front/README.md) | Como rodar o front e o detalhe de cada tela |
-
-## Decisões que valem a leitura antes de mexer
-
-- **Orders API, não Payments API.** As credenciais de teste que o Mercado Pago
-  gera hoje devolvem `401 Unauthorized use of live credentials` em `/v1/payments`
-  — em qualquer método de pagamento. `/v1/orders` funciona com a mesma
-  credencial. Detalhe em [core-plan.md](docs/core-plan.md#payments-api-vs-orders-api-correção-feita-durante-o-teste).
-- **A validação de assinatura do webhook está relaxada só pro tópico `order`**,
-  por um bug do próprio Mercado Pago — o `WebhookSignatureValidator` oficial
-  deles rejeita notificações reais e legítimas. Não é brecha: o status nunca vem
-  do corpo da notificação, é sempre reconsultado na API autenticada antes de
-  mudar o pedido. [Investigação completa](docs/handoff.md#descoberta-importante-bug-do-mercado-pago-na-assinatura-do-webhook-de-order--2026-09-05).
-- **Preço nunca vem do front.** O `POST /pedidos` recebe `itemId` + `quantity` e
-  busca o preço no banco. Valores em centavos, em todo lugar.
-- **O pedido guarda um snapshot dos itens** (`items` em JSONB) — editar ou
-  desativar um item não reescreve o histórico de quem já comprou.
-- **Soft-delete nos itens**, pelo mesmo motivo.
-- **Categoria é prefixo no `name`** (`"Bebidas: Guaraná Lata"`). A API não tem
-  campo de categoria; o operador nunca digita o prefixo, o front junta e separa
-  em um único ponto (`splitCategory`/`joinCategory` em `core.js`).
-- **`dotenv.config()` no topo do entrypoint**, antes de qualquer `require` do
-  projeto — os services leem `process.env` no carregamento do módulo.
-- **Toda rota async passa pelo `asyncHandler`.** Sem isso, uma rejeição não
-  tratada derruba o processo inteiro.
-
-## Como foi construído
-
-Desenvolvido com auxílio de IA (Claude, via Claude Code), mas com o processo
-invertido em relação ao "pede e aceita": engenharia de requisitos antes de
-qualquer código, uma abstração de *spec-driven development*, a estrutura inicial
-de pastas e arquivos criada por mim, linter configurado desde o começo, e uma
-stack que eu já conheço e consigo manter. Tudo que foi gerado passou por
-revisão minha antes de entrar.
-
-O resultado disso está nos documentos acima: cada decisão não óbvia tem um "por
-quê" escrito ao lado, e os becos sem saída (a Payments API, o bug de assinatura
-do webhook, o `403` do Object Storage) estão registrados com a investigação
-inteira — pra ninguém, humano ou agente, refazer o caminho.
-
-## Licença
-
-Sem licença definida. Código de um projeto real de uma festa beneficente,
-publicado como referência.
+O resultado desse workflow está bem descrito na @docs/Handoff pois foi o que utilizei para manter um fluxo de conhecimento sobre decisões e outras informações importantes entre as sessões.
