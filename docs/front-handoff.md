@@ -281,7 +281,7 @@ depois de uma primeira navegação na origem certa.
 - 1 `PATCH` idempotente no pedido `0f91b545-5a10-4463-85ec-92d211b326cc`
   (`cancelled` → `cancelled`): não mudou nada no banco, só serviu pra disparar o
   evento do WebSocket.
-- Login usado nos testes: `teste@igreja.org` / `senha123` (já existia).
+- Login usado nos testes: a conta de operador criada na sessão anterior.
 
 ## O que **não** foi construído
 

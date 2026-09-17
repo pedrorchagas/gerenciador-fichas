@@ -24,3 +24,5 @@ build/
 .vscode/
 .idea/
 *.sqlite
+# claude code
+.claude/scheduled_tasks.lock

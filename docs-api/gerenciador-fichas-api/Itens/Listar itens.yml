@@ -8,11 +8,6 @@ http:
   url: "{{baseUrl}}/itens"
   auth: inherit
 
-runtime:
-  variables:
-    - name: baseUrl
-      value: https://jargon-shone-manmade.ngrok-free.dev
-
 settings:
   encodeUrl: true
   timeout: 0
